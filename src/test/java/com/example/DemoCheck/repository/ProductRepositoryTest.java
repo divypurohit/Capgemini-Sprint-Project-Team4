@@ -6,12 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.DemoCheck.entity.Product;
@@ -25,6 +29,9 @@ public class ProductRepositoryTest {
 
     @Autowired
     private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private TestEntityManager testEntityManager;
 
     @BeforeEach
     void setUp() {
@@ -93,4 +100,55 @@ public class ProductRepositoryTest {
         assertNotNull(productList);
         assertTrue(productList.isEmpty());
     }
+
+    // find by valid Id
+    @Test
+    void testFindById() {
+        Optional<Product> result = productRepository.findById("S10_89856");
+
+        assertTrue(result.isPresent());
+        assertEquals("Trimax", result.get().getProductName());
+    }
+
+    // find by invalid Id
+    @Test
+    void testFindByInvalidId_NoProduct() {
+        Optional<Product> result = productRepository.findById("S10_89222");
+
+        assertFalse(result.isPresent());
+    }
+
+    // pagination testing
+    @Test
+    void testFindAll_Pagination() {
+        Page<Product> pages = productRepository.findAll(PageRequest.of(0, 20));
+
+        assertEquals(20, pages.getContent().size());
+        assertEquals(6, pages.getTotalPages());
+    }
+
+    // custom search query testing
+    @Test
+    void testSearchByNameOrLine() {
+        Page<Product> result = productRepository.findByProductNameContainingIgnoreCaseOrProductLineContainingIgnoreCase(null, "car", PageRequest.of(0,20));
+
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void testSearchByNameOrLine_NoResults() {
+        Page<Product> result = productRepository.findByProductNameContainingIgnoreCaseOrProductLineContainingIgnoreCase("H&M", "jacket", PageRequest.of(0,20));
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testSearchCaseInsensitivity() {
+        Page<Product> result = productRepository.findByProductNameContainingIgnoreCaseOrProductLineContainingIgnoreCase(
+            null, "plANES", PageRequest.of(0, 10)
+        );
+
+        assertFalse(result.isEmpty());
+    }
+
 }
