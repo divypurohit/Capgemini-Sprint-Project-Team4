@@ -10,17 +10,16 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(path = "customer")
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
+    @Query("""
+    SELECT c FROM Customer c
+    WHERE 
+        LOWER(c.customerName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+        LOWER(c.city) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+        LOWER(c.country) LIKE LOWER(CONCAT('%', :keyword, '%'))
+    """)
+    Page<Customer> findCustomers(@Param("keyword") String keyword, Pageable pageable);
 }
 
 
 
-//public interface CustomerRepository extends JpaRepository<Customer, Integer> {
-//    @Query("""
-//    SELECT c FROM Customer c
-//    WHERE
-//        LOWER(c.customerName) LIKE LOWER(CONCAT('%', :query, '%'))
-//        OR LOWER(c.city) LIKE LOWER(CONCAT('%', :query, '%'))
-//        OR LOWER(c.country) LIKE LOWER(CONCAT('%', :query, '%'))
-//""")
-//    Page<Customer> searchCustomers(@Param("query") String query, Pageable pageable);
-//}
+

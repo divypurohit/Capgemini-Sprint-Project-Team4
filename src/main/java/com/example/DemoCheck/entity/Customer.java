@@ -1,5 +1,6 @@
 package com.example.DemoCheck.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,11 +40,11 @@ public class Customer {
     @Column(name = "city", nullable = false)
     private String city;
 
-//    @Column(name = "state")
-//    private String state;
+    @Column(name = "state")
+    private String state;
 
-//    @Column(name = "postalCode")
-//    private String postalCode;
+    @Column(name = "postalCode")
+    private String postalCode;
 
     @Column(name = "country", nullable = false)
     private String country;
@@ -51,8 +52,9 @@ public class Customer {
     @Column(name = "creditLimit")
     private BigDecimal creditLimit;
 
-//    //Relationship with Employee (Many Customers → One Employee)
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "salesRepEmployeeNumber")
-//    private Employee salesRepEmployee;
+    //Relationship with Employee (Many Customers → One Employee)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "salesRepEmployeeNumber")
+    @JsonIgnore
+    private Employee salesRepEmployee;
 }

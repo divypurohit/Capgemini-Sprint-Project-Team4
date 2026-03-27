@@ -1,8 +1,13 @@
 package com.example.DemoCheck.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -17,14 +22,18 @@ public class Product {
     @Column(name = "productName")
     private String productName;
 
-    @Column(name = "productLine")
-    private String productLine;
+    @ManyToOne
+    @JoinColumn(name = "productLine", referencedColumnName = "productLine")
+    private ProductLine productLine;
 
     @Column(name = "productVendor")
     private String productVendor;
 
     @Column(name = "productScale")
     private String productScale;
+
+    @Column(name = "productDescription")
+    private String productDescription;
 
     @Column(name = "quantityInStock")
     private int quantityInStock;
@@ -34,4 +43,7 @@ public class Product {
 
     @Column(name = "MSRP")
     private double MSRP;
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderDetails> orderDetails;
 }
