@@ -1,5 +1,6 @@
 package com.example.DemoCheck.repository;
 import com.example.DemoCheck.entity.Order;
+import com.example.DemoCheck.entity.OrderDetails;
 import com.example.DemoCheck.projection.OrderProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             @Param("customerNumber") Integer customerNumber,
             Pageable pageable
     );
+
+
 
     @RestResource(path = "byStatus", rel = "byStatus")
     Page<Order> findByStatus(

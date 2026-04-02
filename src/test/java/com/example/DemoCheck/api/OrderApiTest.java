@@ -34,33 +34,25 @@ public class OrderApiTest {
     private CustomerRepository customerRepository;
 
 
-//    @Test
-//    void testSaveOrder() throws Exception {
-//
-//        Order order = new Order();
-//        order.setOrderNumber(10150);
-//        order.setStatus("Processing");
-//
-//        mockMvc.perform(post("/orders")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(order)))
-//                .andExpect(status().isCreated());
-//    }
-//@Test
-//void testSaveOrder() throws Exception {
-//    String json = """
-//        {
-//            "orderNumber": 10150,
-//            "status": "Processing"
-//        }
-//        """;
-//
-//    mockMvc.perform(post("/orders")
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(json))
-//            .andExpect(status().isCreated())
-//            .andExpect(header().exists("Location"));
-//}
+
+@Test
+void testSaveOrder() throws Exception {
+    String json = """
+        {
+            "orderNumber": 10150,
+        "orderDate": "2026-04-01",
+        "requiredDate": "2026-04-10",
+        "status": "Processing",
+        "customer": "/customers/119"
+        }
+        """;
+
+    mockMvc.perform(post("/orders")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json))
+            .andExpect(status().isCreated())
+            .andExpect(header().exists("Location"));
+}
 
 
     @Test
@@ -71,19 +63,9 @@ public class OrderApiTest {
     }
     @Test
     void testCreateOrder() throws Exception {
-        // 1. Create a Customer to satisfy the Foreign Key requirement
-        Customer customer = new Customer();
-        customer.setCustomerNumber(119);
-        customer.setCustomerName("Test Corp");
-        customer.setContactFirstName("John");
-        customer.setContactLastName("Doe");
-        customer.setPhone("555-0123");
-        customer.setAddressLine1("123 Java Lane");
-        customer.setCity("Nagpur");
-        customer.setCountry("India");
-        customerRepository.save(customer);
 
-        // 2. Include the "customer" link in your JSON using the URI format
+
+
         String json = """
     {
         "orderNumber": 10150,
@@ -132,7 +114,7 @@ public class OrderApiTest {
         // We only send the field we want to change
         String json = """
             {
-              "orderNumber": 51,
+              "orderNumber": 55,
               "orderDate": "2023-01-01",
               "requiredDate": "2023-01-10",
               "status": "Shipped",
@@ -141,7 +123,7 @@ public class OrderApiTest {
             """;
 
         // Change .put() to .patch()
-        mockMvc.perform(put("/orders/51")
+        mockMvc.perform(put("/orders/55")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isNoContent());
